@@ -2,13 +2,12 @@ function [] = run(algo, varargin)
 %rng(5);
 addpath('../utils')
 parser = inputParser;
-parser.addParameter('dataset', 'test');
 parser.addParameter('weight', '');
 parser.addParameter('feature','');
 parser.addParameter('split', 1);
 % prediction(0), feature selection(1), feature projection(2)
 parser.addParameter('task', 0);
-parser.addParameter('home', '../../../');
+parser.addParameter('datadir','/Users/chenyifan/jianguo/dataset/test/');
 parser.addParameter('item', 0);
 parser.addParameter('GPU', 0);
 parser.addParameter('CPU', 1);
@@ -24,17 +23,15 @@ parser.addParameter('z', -1);
 parser.parse(varargin{:});
 
 results = parser.Results;
-dataset = results.dataset;
 weight = results.weight;
 feature = results.feature;
+datadir = results.datadir;
 split = results.split;
-task = results.task;
 item = results.item;
 miter = results.miter;
 N = results.N;
 GPU = results.GPU;
 CPU = results.CPU;
-home = results.home;
 alpha = results.alpha;
 beta = results.beta;
 gamma = results.gamma;
@@ -45,8 +42,7 @@ z = results.z;
 R = [];
 F = [];
 
-fprintf('dataset: %s\n', dataset)
-dataDir = strcat(home, 'dataset/', dataset, '/');
+fprintf('dataset: %s\n', datadir)
 
 if strcmp(algo, 'Frequent')
     task = 1;
@@ -79,12 +75,12 @@ end
 % training dataset
 if split>0
     fprintf('split %d of train dataset\n', split)
-    Rpath = strcat(dataDir, 'train', num2str(split));
+    Rpath = strcat(datadir, 'train', num2str(split));
     R = full(mmread(Rpath));
     if GPU
         R = gpuArray(R);
     end
-    Tpath = strcat(dataDir, 'test', num2str(split));
+    Tpath = strcat(datadir, 'test', num2str(split));
     T = mmread(Tpath);
 else
     disp('unsupervised algorithm')
@@ -93,16 +89,16 @@ end
 if N >= 0
     if task == 0 && ~isempty(feature)
         fprintf('using projected feature: %s\n', feature)
-        Fpath = strcat(dataDir,'project/',feature);
+        Fpath = strcat(datadir,'project/',feature);
         F = dlmread(Fpath);
     else
-        Fpath = strcat(dataDir,'feature');
+        Fpath = strcat(datadir,'feature');
         F = full(mmread(Fpath));
     end
     if N==0
         disp('all feature used') 
     else
-        path = sprintf('%sselect/%s',dataDir, weight);
+        path = sprintf('%sselect/%s',datadir, weight);
         w = dlmread(path);
         [~, w] = sort(w, 'descend');
         F = F(:, w(1:N));
@@ -240,7 +236,7 @@ switch task
         res = test(pR,T);
         HR = res.HR;
         ARHR = res.ARHR;
-        path = strcat(dataDir, algo, '_res');
+        path = strcat(datadir, algo, '_res');
         file = fopen(path, 'a');
         fprintf(file, ...
             '%s\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\n', ...
@@ -249,14 +245,14 @@ switch task
         fclose(file);
         disp(res);
     case 1 % feature selection
-        path = sprintf('%sselect', dataDir);
+        path = sprintf('%sselect', datadir);
         if ~exist(path,'dir')
             mkdir(path);
         end
         path = strcat(path, '/', weight);
         dlmwrite(path, w);
     case 2 % feature projection
-        path = sprintf('%sproject',dataDir);
+        path = sprintf('%sproject',datadir);
         if ~exist(path,'dir')
             mkdir(path);
         end
