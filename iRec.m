@@ -1,4 +1,4 @@
-function [ pR ] = iRec(R, F, beta, miter)
+function [ W ] = iRec(R, F, beta, miter)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 n = size(R,2);
@@ -12,10 +12,6 @@ for iter=1:miter
     W = W .* FRR;
     fprintf('iteration %d, obj=%f\n',iter,object());
 end
-
-S = F*W;
-S = S - diag(diag(S));
-pR = R*S;
 
     function obj = object()
         t = R-RF*W;

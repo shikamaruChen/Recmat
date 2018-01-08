@@ -1,3 +1,17 @@
+R=mmread('/Users/chenyifan/jianguo/dataset/nips/split/train1');
+T=mmread('/Users/chenyifan/jianguo/dataset/nips/split/test1');
+F=mmread('/Users/chenyifan/jianguo/dataset/nips/split/valid1');
+
+
+
+nR = nnz(sum(R,1));
+nT = nnz(sum(T,1));
+nF = nnz(sum(F,1));
+n = [nR,nT,nF];
+disp(sum(n))
+
+
+
 % run('Frequent','dataset','beauty/dataset2','weight','fre')
 % F = mmread('/Users/chenyifan/jianguo/dataset/beauty/dataset2/feature');
 % w = dlmread('/Users/chenyifan/jianguo/dataset/beauty/dataset2/select/fre');
@@ -6,7 +20,7 @@
 % mmwrite('/Users/chenyifan/jianguo/dataset/beauty/dataset2/F',F);
 
 
-run('Rec','home','../','dataset','beauty','weight','alpha_1.w','N',5000,'alpha',0.02,'beta',0.1,'lambda',0.3,'miter',10,'GPU',1,'miter',1)
+%run('Rec','home','../','dataset','beauty','weight','alpha_1.w','N',5000,'alpha',0.02,'beta',0.1,'lambda',0.3,'miter',10,'GPU',1,'miter',1)
 
 % run('PSInfo','dataset','beauty/dataset2','weight','5k_0.w','N',5000,'feature','5k_0.pro','GPU',1,'alpha',0.1,'k',2000,'z',10,'miter',3,'item',1000);
 % run('fSLIM','beta',0.1,'lambda',0.1,'dataset','beauty/dataset2','feature','5k_0.pro','GPU',1);

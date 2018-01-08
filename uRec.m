@@ -1,4 +1,4 @@
-function [ pR ] = uRec( R, F, beta, miter )
+function [ W ] = uRec( R, F, beta, miter )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 m = size(R,1);
@@ -11,7 +11,6 @@ for iter=1:miter
     W = W .* (RF');
     fprintf('iteration %d, obj=%f\n',iter,object());
 end
-pR = (F*W)';
     function obj = object()
         t = R'-F*W;
         obj = trace_eff(t) / 2;
